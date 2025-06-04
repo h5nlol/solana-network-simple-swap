@@ -1,76 +1,104 @@
-# Solana Jupiter Swap Interface
+# Solana Token Swap Interface
 
-A beautiful, responsive token swap interface built with Next.js and Jupiter's aggregator for the Solana blockchain.
+A modern, user-friendly token swap interface built on the Solana blockchain. This application leverages Jupiter's powerful aggregation protocol to provide users with the best possible swap rates across multiple decentralized exchanges.
 
-## Features
+## Overview
 
-- 🔄 **Token Swapping**: Swap between USDC, SOL, and USDUC tokens
-- 📊 **Real-time Charts**: View TradingView charts for selected tokens
-- 💰 **Balance Display**: See your token balances in real-time
-- 🎯 **Slippage Control**: Customize slippage tolerance
-- 📱 **Responsive Design**: Works on desktop and mobile
-- 🔒 **Wallet Integration**: Connect with Phantom, Solflare, and other Solana wallets
-- ⚡ **Jupiter Integration**: Best prices through Jupiter's aggregator
-- 🎨 **Beautiful UI**: Modern design with smooth animations
+This swap interface is designed to make token trading on Solana simple and accessible. Built with Next.js and integrated with Jupiter's aggregator, it automatically finds the most efficient routes across various DEXs to ensure users get optimal prices for their trades.
+
+The application currently supports swapping between USDC, SOL, and USDUC tokens, with real-time balance tracking, price impact calculations, and integrated charting capabilities. (you can change that yourself, or add more tokens)
+
+## Key Features
+
+**Smart Routing**: Utilizes Jupiter's aggregation protocol to find the best prices across multiple DEXs including Raydium, Orca, pumpswap, non migrated pumpdotfun tokens and Serum.
+
+**Real-time Balance Tracking**: Displays your current token balances with automatic refresh after successful swaps.
+
+**Price Impact Protection**: Shows price impact calculations and warns users about high-impact trades to prevent unexpected losses.
+
+**Integrated Charts**: View TradingView charts for supported tokens directly within the interface.
+
+**Wallet Integration**: Seamless connection with popular Solana wallets including Phantom and Solflare.
+
+**Slippage Control**: Customizable slippage tolerance settings to balance between execution speed and price protection.
+
+**Transaction Monitoring**: Real-time transaction status updates with links to blockchain explorers for verification.
+
+## Technology Stack
+
+This application is built using modern web technologies optimized for performance and user experience:
+
+- **Frontend Framework**: Next.js 14 with React 18
+- **Styling**: Tailwind CSS with custom design system
+- **UI Components**: shadcn/ui component library
+- **Blockchain Integration**: Solana Web3.js and Wallet Adapter
+- **DEX Aggregation**: Jupiter API v6
+- **RPC Provider**: Helius for reliable blockchain connectivity
+- **Charts**: TradingView embedded widgets
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
-- A Helius API key (free at [helius.xyz](https://helius.xyz))
+Before running this application, you'll need:
+
+- Node.js version 18 or higher
+- A Helius API key (free tier available at helius.xyz)
+- A Solana wallet browser extension (Phantom, Solflare, etc.)
 
 ### Installation
 
-1. Clone the repository:
-\`\`\`bash
-git clone <your-repo-url>
-cd solana-jupiter-swap
-\`\`\`
+Clone the repository and install dependencies:
 
-2. Install dependencies:
 \`\`\`bash
+git clone https://github.com/your-username/solana-jupiter-swap.git
+cd solana-jupiter-swap
 npm install
 \`\`\`
 
-3. Set up environment variables:
+### Configuration
+
+Create your environment configuration:
+
 \`\`\`bash
 cp .env.example .env.local
 \`\`\`
 
-4. Edit `.env.local` and add your Helius API key:
+Edit the `.env.local` file and add your Helius API key:
+
 \`\`\`env
 NEXT_PUBLIC_HELIUS_API_KEY=your_helius_api_key_here
+NEXT_PUBLIC_REFERRAL_ACCOUNT=your_referral_wallet_address
 \`\`\`
 
-5. Run the development server:
+### Running the Application
+
+Start the development server:
+
 \`\`\`bash
 npm run dev
 \`\`\`
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open your browser and navigate to `http://localhost:3000` to access the swap interface.
 
-## Environment Variables
+## Configuration Options
+
+### Environment Variables
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `NEXT_PUBLIC_HELIUS_API_KEY` | Your Helius RPC API key for optimal performance | Yes |
-| `NEXT_PUBLIC_REFERRAL_ACCOUNT` | Wallet address to receive referral fees | No |
-
-## Configuration
+| `NEXT_PUBLIC_HELIUS_API_KEY` | Your Helius RPC API key for optimal performance and rate limits | Yes |
+| `NEXT_PUBLIC_REFERRAL_ACCOUNT` | Wallet address to receive referral fees from swaps | No |
 
 ### Adding New Tokens
 
-To add new tokens, update the `TOKENS` object in both:
-- `components/token-selector.tsx`
-- `app/page.tsx`
+To support additional tokens, update the token configuration in both `components/token-selector.tsx` and `app/page.tsx`:
 
-Example:
 \`\`\`typescript
 NEWTOKEN: {
   mint: "token_mint_address_here",
   symbol: "TOKEN",
-  name: "Token Name",
+  name: "Token Full Name",
   decimals: 6,
   logoURI: "/images/token-logo.png",
 }
@@ -78,41 +106,90 @@ NEWTOKEN: {
 
 ### Customizing Referral Fees
 
-The app includes a referral fee mechanism. You can:
-1. Set your own referral account in `.env.local`
-2. Or modify the `feeAccount` in the swap execution code
+The application includes a referral fee mechanism that can be configured through environment variables or by modifying the `feeAccount` parameter in the swap execution code.
 
-## Tech Stack
+## How It Works
 
-- **Framework**: Next.js 14
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui
-- **Wallet Integration**: Solana Wallet Adapter
-- **Blockchain**: Solana Web3.js
-- **DEX Aggregator**: Jupiter
-- **Charts**: TradingView Widgets
+### Swap Process
+
+1. **Quote Generation**: When you enter a swap amount, the application queries Jupiter's API to find the best route across multiple DEXs
+2. **Route Optimization**: Jupiter analyzes liquidity across various pools to minimize price impact and maximize output
+3. **Transaction Creation**: A swap transaction is constructed with your specified parameters
+4. **Wallet Interaction**: Your wallet prompts you to approve the transaction
+5. **Execution**: The transaction is submitted to the Solana network
+6. **Confirmation**: The application monitors the transaction status and updates your balances
+
+### Security Features
+
+- All transactions require explicit wallet approval
+- Price impact warnings for potentially unfavorable trades
+- Slippage protection to prevent excessive price movement
+- Open source code for full transparency and auditability
+
+## Development
+
+### Project Structure
+
+\`\`\`
+├── app/                    # Next.js app directory
+├── components/            # React components
+│   ├── ui/               # shadcn/ui components
+│   ├── wallet-provider.tsx
+│   ├── wallet-button.tsx
+│   └── token-selector.tsx
+├── public/               # Static assets
+│   └── images/          # Token logos
+├── lib/                 # Utility functions
+└── README.md
+\`\`\`
+
+### Building for Production
+
+\`\`\`bash
+npm run build
+npm start
+\`\`\`
 
 ## Contributing
 
+We welcome contributions from the community. Whether you're fixing bugs, adding features, or improving documentation, your help makes this project better for everyone.
+
+### How to Contribute
+
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+3. Make your changes and test thoroughly
+4. Commit your changes: `git commit -m 'Add amazing feature'`
+5. Push to your branch: `git push origin feature/amazing-feature`
+6. Open a Pull Request with a clear description of your changes
+
+### Development Guidelines
+
+- Follow the existing code style and conventions
+- Add tests for new functionality when applicable
+- Update documentation for any API changes
+- Ensure all tests pass before submitting
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the MIT License. See the LICENSE file for more details.
 
-## Support
+## Support and Community
 
-- Create an issue for bug reports or feature requests
-- Join our community discussions
-- Check out the [Jupiter documentation](https://docs.jup.ag/)
+- **Issues**: Report bugs or request features through GitHub Issues
+- **Discussions**: Join community discussions for questions and ideas
+- **Documentation**: Comprehensive guides available in the docs folder
 
 ## Acknowledgments
 
-- [Jupiter](https://jup.ag/) for the amazing DEX aggregator
-- [Helius](https://helius.xyz/) for reliable RPC infrastructure
-- [Solana](https://solana.com/) for the fast blockchain
-- [shadcn/ui](https://ui.shadcn.com/) for beautiful components
+This project builds upon the excellent work of several open source projects and services:
+
+- **Jupiter Protocol** for providing the best-in-class DEX aggregation
+- **Solana Foundation** for the high-performance blockchain infrastructure
+- **Helius** for reliable RPC services and developer tools
+- **shadcn/ui** for the beautiful and accessible component library
+- **Vercel** for seamless deployment and hosting
+
+## Disclaimer
+
+This software is provided as-is for educational and development purposes. Users should understand the risks associated with cryptocurrency trading and use the application at their own discretion. Always verify transactions and never trade more than you can afford to lose.
